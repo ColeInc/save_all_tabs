@@ -2,7 +2,7 @@
     "manifest_version": 2,
     "name": "Save All Tabs",
     "version": "1.0",
-    "description": "save all open tabs, and reopen them on restart!",
+    "description": "save all currently open tabs, and reopen them on restart!",
     "background": {
         "persistent": false,
         "scripts": ["background.js"]

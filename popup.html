@@ -6,9 +6,25 @@
     </head>
     <body>
         <div id="main">
-            <h1>Save all Tabs</h1>
-            <button>Save Tabs</button><br />
-            <button>Load Tabs</button>
+            <div>
+                <h1>Save all Tabs</h1>
+                <button id="saveTabs">Save Tabs</button><br />
+                <button id="loadTabs">Load Tabs</button>
+            </div>
+            <div>
+                <!-- <p>auto open on start</p> -->
+                <label class="switch">
+                    <input type="checkbox" id="autoOpenCheckbox" unchecked />
+                    <span class="slider round">auto open on start</span>
+                </label>
+                <br />
+                <!-- <p>auto save tabs</p> -->
+                <label class="switch">
+                    <input type="checkbox" id="autoSaveCheckbox" unchecked />
+                    <span class="slider round">auto save tabs</span>
+                </label>
+            </div>
         </div>
+        <script type="text/javascript" src="popup.js"></script>
     </body>
 </html>
