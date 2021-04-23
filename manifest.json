@@ -18,5 +18,12 @@
         "48": "icon48.png",
         "128": "icon128.png"
     },
-    "permissions": ["activeTab", "tabs", "storage", "http://*/*", "https://*/*"]
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage",
+        "unlimitedStorage",
+        "http://*/*",
+        "https://*/*"
+    ]
 }

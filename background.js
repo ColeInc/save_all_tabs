@@ -1,19 +1,20 @@
 onStartup();
 
 function onStartup() {
-    // load in checkbox values from chrome.storage.local - REMEMBER TO JSON.parse()
-    // set the html to corresponding value found in storage (if any)
-    // check if auto open checkbox is ticked, if so run loadLatestTabs() from here!
-    // (idk if this is right place to check it or some monitor inside popup.js) check if auto save checkbox is ON, if so start saving all tabs every minute.
-}
+    // load in checkbox values from chrome.storage.local:
 
-// listen for sendMessages sent from popup.js
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-    console.log(request);
-    console.log(sender);
-    sendResponse({ farewell: "goodbye" });
-    return true; // this has to be here for async
-});
+    chrome.storage.local.get("autoOpenCheckbox", (result) => {
+        if (JSON.parse(result.autoOpenCheckbox)) {
+            loadLatestTabs(); // run the loadLatestTabs function from startup
+        }
+    });
+
+    chrome.storage.local.get("autoSaveCheckbox", (result) => {
+        if (JSON.parse(result.autoSaveCheckbox)) {
+            //if auto save checkbox is ON, if so start saving all tabs every minute.
+        }
+    });
+}
 
 function getCurrentTabs() {
     chrome.tabs.query({}, (result) => {
@@ -55,19 +56,13 @@ function getCurrentTabs() {
                 currentWindow = tab.windowId;
             }
         });
-        //push final window of tabs into output list:
-        windowTabList.windows.push(currentWindowList);
+
+        windowTabList.windows.push(currentWindowList); //push final window of tabs into output list:
 
         // Final output list:
         // console.log("FINAL LIST: ", windowTabList);
 
-        storeTabs({ myTabs: JSON.stringify(windowTabList) });
-    });
-}
-
-function storeTabs(jsonPayload) {
-    var allTabs = chrome.storage.local.set(jsonPayload, (result) => {
-        console.log("Stored the following:\n" + jsonPayload.myTabs);
+        genericChromeStorageSaver("myTabs", windowTabList);
     });
 }
 
@@ -75,11 +70,10 @@ function loadLatestTabs() {
     // loading in the previously stored tabs!
     chrome.storage.local.get("myTabs", (result) => {
         if (result.myTabs != undefined) {
-            var tabs = JSON.parse(result.myTabs);
-            console.log("Tabs found:\n" + tabs);
+            // console.log("Tabs found:\n" + result.myTabs);
 
             // For each different window previously saved:
-            for (const [key, value] of Object.entries(tabs.windows)) {
+            for (const [key, value] of Object.entries(result.myTabs.windows)) {
                 console.log(key, value);
 
                 var incognito = value.incognito ? true : false;
@@ -91,10 +85,8 @@ function loadLatestTabs() {
                     },
                     (w) => {
                         var windowId = w.id;
-                        // console.log("windowId --> " + w.id);
 
                         value.tab_urls.forEach((tab) => {
-                            // console.log("individual tab: " + tab);
                             chrome.tabs.create({
                                 url: tab,
                                 windowId: windowId,
@@ -106,12 +98,10 @@ function loadLatestTabs() {
                     }
                 );
             }
-
-            // perhaps try send back to UI message of success/failure on tab load...
         } else {
             var errorMessage = "No previously saved chrome tabs found :(";
             console.log(errorMessage);
-            alert(errorMessage);
+            return errorMessage;
         }
     });
 }
@@ -124,12 +114,13 @@ function deleteFirstTab(windowId) {
 
 function genericChromeStorageSaver(key, value) {
     var keyValuePair = JSON.parse(
-        '{ "' + key + '": "' + JSON.stringify(value) + '" }'
+        '{ "' + key + '": ' + JSON.stringify(value) + " }"
     );
+    // console.log("keyPairValue: ", keyValuePair);
 
     chrome.storage.local.set(keyValuePair, (result) => {
-        console.log("Stored the following:\n");
-        console.log(keyValuePair);
+        // console.log("Stored the following:\n");
+        // console.log(keyValuePair);
     });
 }
 
@@ -152,3 +143,11 @@ function autoSaveUnchecked() {
     // console.log("autoSaveUnchecked!");
     genericChromeStorageSaver("autoSaveCheckbox", false);
 }
+
+// listen for sendMessages sent from popup.js
+// chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+//     console.log(request);
+//     console.log(sender);
+//     sendResponse({ farewell: "goodbye" });
+//     return true; // this has to be here for async
+// });

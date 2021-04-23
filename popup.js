@@ -32,14 +32,20 @@ function popupStartup() {
 // SAVETABS BUTTON LISTENER
 document.getElementById("saveTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
-        backgroundPage.getCurrentTabs();
+        var resp = backgroundPage.getCurrentTabs();
+        if (resp.length > 0) {
+            document.getElementById("errorNotification").innerHTML = resp;
+        }
     });
 });
 
 // LOADTABS BUTTON LISTENER
 document.getElementById("loadTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
-        backgroundPage.loadLatestTabs();
+        var resp = backgroundPage.loadLatestTabs();
+        if (resp.length > 0) {
+            document.getElementById("errorNotification").innerHTML = resp;
+        }
     });
 });
 
