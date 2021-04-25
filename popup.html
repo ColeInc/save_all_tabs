@@ -6,24 +6,60 @@
     </head>
     <body>
         <div id="main">
-            <div>
-                <h1>Save all Tabs</h1>
+            <div id="container">
+                <h1>SAVE ALL TABS</h1>
                 <button id="saveTabs">Save Tabs</button><br />
                 <button id="loadTabs">Load Tabs</button>
-                <p id="errorNotification"></p>
-            </div>
-            <div>
-                <!-- <p>auto open on start</p> -->
-                <label class="switch">
-                    <input type="checkbox" id="autoOpenCheckbox" unchecked />
-                    <span class="slider round">auto open on start</span>
-                </label>
-                <br />
-                <!-- <p>auto save tabs</p> -->
-                <label class="switch">
-                    <input type="checkbox" id="autoSaveCheckbox" unchecked />
-                    <span class="slider round">auto save tabs</span>
-                </label>
+                <p id="errorNotification" class="errorNotification"></p>
+                <div id="switchContainer">
+                    <div class="switchRow">
+                        <div class="switchRowContainer">
+                            <p class="switchCaption">OPEN ON START</p>
+                            <label id="autoOpenSwitch" class="switch">
+                                <input
+                                    type="checkbox"
+                                    id="autoOpenCheckbox"
+                                    unchecked
+                                />
+                                <span class="slider round" />
+                            </label>
+                            <div id="autoOpenDesc" class="hide">
+                                <p>
+                                    Automatically open your previously saved
+                                    tabs when you open a fresh browser.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="switchRow">
+                        <div class="switchRowContainer">
+                            <p class="switchCaption">AUTO SAVE</p>
+                            <input id="autoSaveMinsInput" value="2" />
+                            <label id="autoSaveSwitch" class="switch">
+                                <input
+                                    type="checkbox"
+                                    id="autoSaveCheckbox"
+                                    unchecked
+                                />
+                                <span class="slider round" />
+                            </label>
+                            <div id="autoSaveDesc" class="hide">
+                                <p>
+                                    Periodically save all your currently open
+                                    tabs. Default is 2 minutes but change it to
+                                    longer if experiencing any processing or
+                                    networking delays.
+                                </p>
+                            </div>
+                            <p
+                                id="inputNotification"
+                                class="errorNotification"
+                            ></p>
+                        </div>
+                    </div>
+                </div>
+                <p id="signature">Designed by <a id="daynnite">Cole</a>.</p>
             </div>
         </div>
         <script type="text/javascript" src="popup.js"></script>

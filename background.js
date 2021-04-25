@@ -1,20 +1,42 @@
 onStartup();
 
 function onStartup() {
-    // load in checkbox values from chrome.storage.local:
+    // load in stored checkbox values from chrome.storage.local:
 
     chrome.storage.local.get("autoOpenCheckbox", (result) => {
-        if (JSON.parse(result.autoOpenCheckbox)) {
+        if (result.autoOpenCheckbox) {
             loadLatestTabs(); // run the loadLatestTabs function from startup
         }
     });
 
     chrome.storage.local.get("autoSaveCheckbox", (result) => {
-        if (JSON.parse(result.autoSaveCheckbox)) {
-            //if auto save checkbox is ON, if so start saving all tabs every minute.
+        if (result.autoSaveCheckbox) {
+            autoSaveAlarm.create(); // if auto save checkbox is ON, saving all tabs every x minutes.
+        } else {
+            autoSaveAlarm.clear(); // if the Auto Save switch isn't checked, delete any existing alarms on startup.
         }
     });
 }
+
+var autoSaveAlarm = {
+    create: function (e) {
+        chrome.storage.local.get("autoSaveMins", (result) => {
+            var minutes = result.autoSaveMins;
+            var mins = isNumeric(minutes) ? minutes : 1; // if the value from storage is a valid number use it, otherwise use default of 1.
+
+            console.log("creating an alarm to trigger every %s mins", mins);
+
+            chrome.alarms.create("autoSaveAlarm", {
+                periodInMinutes: parseInt(mins),
+            });
+        });
+        console.log("alarm created!");
+    },
+    clear: function (e) {
+        chrome.alarms.clear("autoSaveAlarm");
+        console.log("alarm deleted!");
+    },
+};
 
 function getCurrentTabs() {
     chrome.tabs.query({}, (result) => {
@@ -119,8 +141,8 @@ function genericChromeStorageSaver(key, value) {
     // console.log("keyPairValue: ", keyValuePair);
 
     chrome.storage.local.set(keyValuePair, (result) => {
-        // console.log("Stored the following:\n");
-        // console.log(keyValuePair);
+        console.log("genericChromeStorageSaver stored the following:\n");
+        console.log(keyValuePair);
     });
 }
 
@@ -137,11 +159,13 @@ function autoOpenUnchecked() {
 function autoSaveChecked() {
     // console.log("autoSaveChecked!");
     genericChromeStorageSaver("autoSaveCheckbox", true);
+    autoSaveAlarm.create();
 }
 
 function autoSaveUnchecked() {
     // console.log("autoSaveUnchecked!");
     genericChromeStorageSaver("autoSaveCheckbox", false);
+    autoSaveAlarm.clear();
 }
 
 // listen for sendMessages sent from popup.js
@@ -151,3 +175,34 @@ function autoSaveUnchecked() {
 //     sendResponse({ farewell: "goodbye" });
 //     return true; // this has to be here for async
 // });
+
+// Event Listener for Auto Save x minutely backups of all current tabs:
+chrome.alarms.onAlarm.addListener(function (alarm) {
+    console.log(
+        "alarm triggered! (on %s min frequency)",
+        alarm.periodInMinutes
+    );
+    getCurrentTabs();
+});
+
+function isNumeric(str) {
+    if (typeof str != "string") return false; // we only process strings!
+    return (
+        !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+        !isNaN(parseFloat(str))
+    ); // ...and ensure strings of whitespace fail
+}
+
+function setAutoSaveMins(mins) {
+    // console.log("input to setAutoSaveMins:");
+    // console.log(mins);
+
+    genericChromeStorageSaver("autoSaveMins", mins);
+
+    chrome.storage.local.get("autoSaveCheckbox", (result) => {
+        if (result.autoSaveCheckbox) {
+            autoSaveAlarm.clear();
+            autoSaveAlarm.create(); // if an existing alarm exists, delete it and create a new one with the new frequency
+        }
+    });
+}
