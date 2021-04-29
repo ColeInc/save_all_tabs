@@ -6,17 +6,17 @@ body {
 #main {
     width: 350px;
     height: 485px;
+    /* height: 540px; */
     background-color: #0d0d0d;
     border-radius: 5px;
     margin: 0 auto;
     font-family: Helvetica, Arial, sans-serif;
-    /* text-align: center; */
 }
 
 #container {
     margin: auto;
     width: 250px;
-    /* text-align: center; */
+    /* position: relative; */
 }
 
 h1 {
@@ -37,16 +37,12 @@ span {
     color: white;
 }
 
-button {
+.mainButton {
     background-color: #1b1b1b;
     width: 100%;
     height: 60px;
     display: inline-block;
-    /* margin: 0; */
-    /* position: absolute; */
     top: 50%;
-    /* -ms-transform: translateY(-50%);
-    transform: translateY(-50%); */
     margin: 0 0 13px 0;
     border: none;
     border-radius: 5px;
@@ -54,9 +50,10 @@ button {
     font-weight: 100;
     font-family: Helvetica, Arial, sans-serif;
     color: #808080;
+    position: relative;
 }
 
-button:hover {
+.mainButton:hover {
     background-color: #808080;
     transition-duration: 100ms;
     color: #000000;
@@ -84,13 +81,10 @@ button:hover {
 /* ON/OFF Switches */
 .switch {
     position: relative;
-    /* display: inline-block; */
     width: 55px;
     height: 30px;
     margin: 0 0 0 10px;
-    /* vertical-align: top !important; */
     float: right;
-    /* justify-content: flex-end; */
 }
 
 .switch input {
@@ -141,6 +135,7 @@ input:checked + .slider:before {
 
 .switchRow {
     height: 30px;
+    position: relative;
 }
 
 .switchRowContainer {
@@ -155,29 +150,48 @@ input:checked + .slider:before {
 
 .switchCaption {
     font-size: 15px;
-    /* display: inline-block; */
-    vertical-align: middle !important;
     cursor: default;
     margin: 0;
-    /* float: left; */
-    /* padding: 0 5px 0 0; */
-    /* justify-content: space-between; */
-    /* display: flex;
-    /* width: 50%; */
-    /* align-items: center;
-    justify-content: center; */
 }
 
 .switchCaption:hover {
-    /* text-decoration: underline; */
-    color: #6b6b6b;
+    color: #a3a3a3;
     border-bottom: 1px dashed #353535;
-    padding-bottom: 2px;
+    /* padding-bottom: 2px; */
+}
+
+.hoverDesc {
+    background-color: #222222;
+    border: 1px solid #2e2e2e;
+    color: #bdbdbd;
+    width: 190px;
+    font-size: 14px;
+    position: absolute;
+    display: none;
+    top: 20px;
+    left: 25px;
+    border-radius: 5px;
+    padding: 6px 6px 10px 6px;
+    z-index: 9;
+}
+
+.hoverDesc:after {
+    content:'';
+    position:absolute;
+    top: -5px;
+    left: 30%;
+    width: 8px;
+    height: 8px;
+    border-bottom: 1px solid #353535;
+    border-right: 1px solid #353535;
+    background-color: #222222;
+    -moz-transform:rotate(225deg);
+    -webkit-transform:rotate(225deg);
+    transform:rotate(225deg);
 }
 
 #autoSaveMinsInput {
     display: inline-block;
-    /* vertical-align: middle; */
     top: 0;
     width: 28px;
     height: 18px;
@@ -186,12 +200,8 @@ input:checked + .slider:before {
     background-color: transparent;
     border: none;
     text-align: center;
-    /* color: #6b6b6b; */
-    /* border-bottom: 2px solid #ff4dff; */
-    /* border-bottom: 1px solid -webkit-linear-gradient(right, #ff4dff, #4dd2ff); */
     padding-bottom: 8px;
     margin: 0 0 0 7px;
-    /* justify-content: space-between; */
     border-bottom: 2px solid transparent;
     border-image: linear-gradient(to right, #ff4dff, #4dd2ff);
     border-image-slice: 1;
@@ -206,21 +216,9 @@ input:focus {
     display: none;
 }
 
-.hide {
-    display: none;
-}
-
-#autoOpenSwitch:hover + .hide {
-    display: block;
-}
-
-#autoSaveSwitch:hover + .hide {
-    display: block;
-}
-
 #signature {
     float: left;
-    color: #242424;
+    color: #3d3d3d;
     margin: 10px 0 0 0;
     font-size: 14px;
     -webkit-user-select: none; /* Safari */

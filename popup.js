@@ -38,8 +38,7 @@ document.getElementById("saveTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
         var resp = backgroundPage.getCurrentTabs();
         if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display =
-                "block";
+            document.getElementById("errorNotification").style.display = "block";
             document.getElementById("errorNotification").innerHTML = resp;
         }
     });
@@ -50,8 +49,7 @@ document.getElementById("loadTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
         var resp = backgroundPage.loadLatestTabs();
         if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display =
-                "block";
+            document.getElementById("errorNotification").style.display = "block";
             document.getElementById("errorNotification").innerHTML = resp;
         }
     });
@@ -98,15 +96,15 @@ function isNumeric(str) {
 // Auto Save MINUTES Input Box
 document.getElementById("autoSaveMinsInput").addEventListener("input", (e) => {
     var mins = e.target.value;
-    if (isNumeric(mins) && mins > 0) {
+    if (isNumeric(mins) && mins > 1) {
         document.getElementById("inputNotification").innerHTML = "";
         document.getElementById("inputNotification").style.display = "none";
         chrome.runtime.getBackgroundPage((backgroundPage) => {
             backgroundPage.setAutoSaveMins(e.target.value);
         });
-    } else {
-        // put some kind of temporary error msg back to them saying invalid value found!
+    } else if (mins.length > 0) {
         document.getElementById("inputNotification").style.display = "block";
+        document.getElementById("inputNotification").style.color = "#ff5555";
         document.getElementById("inputNotification").innerHTML =
             "Invalid auto save frequency!";
     }
@@ -125,6 +123,7 @@ document.getElementById("autoSaveMinsInput").addEventListener("blur", (e) => {
             }
         });
         document.getElementById("inputNotification").innerHTML = ""; // remove the error msg that may have been displayed
+        document.getElementById("inputNotification").style.color = "#bdbdbd";
         document.getElementById("inputNotification").style.display = "none";
     }
 });
@@ -133,3 +132,27 @@ document.getElementById("autoSaveMinsInput").addEventListener("blur", (e) => {
 //     console.log("response is below:");
 //     alert(response.farewell);
 // });
+
+// Hover ON AutoOpen Description Event Listener:
+document.getElementById("autoOpenSwitchCaption").addEventListener("mouseenter", function (event) {
+    var hiddenElement = document.getElementById("autoOpenDesc")
+    hiddenElement.style.display = "block";
+});
+
+// Hover OFF AutoOpen Description Event Listener:
+document.getElementById("autoOpenSwitchCaption").addEventListener("mouseleave", function (event) {
+    var hiddenElement = document.getElementById("autoOpenDesc")
+    hiddenElement.style.display = "none";
+});
+
+// Hover ON AutoSave Description Event Listener:
+document.getElementById("autoSaveSwitchCaption").addEventListener("mouseenter", function (event) {
+    var hiddenElement = document.getElementById("autoSaveDesc")
+    hiddenElement.style.display = "block";
+});
+
+// Hover OFF AutoSave Description Event Listener:
+document.getElementById("autoSaveSwitchCaption").addEventListener("mouseleave", function (event) {
+    var hiddenElement = document.getElementById("autoSaveDesc")
+    hiddenElement.style.display = "none";
+});
