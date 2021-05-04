@@ -27,6 +27,9 @@ function popupStartup() {
             document.getElementById("autoSaveMinsInput").value = minutes;
         }
     });
+
+    // Set default theme to dark!
+    // document.documentElement.setAttribute("data-theme", "dark");
 }
 
 // ------------------------------------------------
@@ -156,3 +159,21 @@ document.getElementById("autoSaveSwitchCaption").addEventListener("mouseleave", 
     var hiddenElement = document.getElementById("autoSaveDesc")
     hiddenElement.style.display = "none";
 });
+
+// Export Tabs to Chrome Bookmarks Button Listener:
+document.getElementById("exportTabs").addEventListener("click", () => {
+    chrome.runtime.getBackgroundPage((backgroundPage) => {
+        var resp = backgroundPage.exportTabs();
+        if (resp.length > 0) {
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").innerHTML = resp;
+        }
+    });
+});
+
+// dark / light mode easter egg listener ;)
+document.getElementById("daynnite").addEventListener("click", () => {
+    var currentTheme = document.documentElement.getAttribute("data-theme"); // get current theme
+    var switchToTheme = currentTheme === "dark" ? "light" : "dark"
+    document.documentElement.setAttribute("data-theme", switchToTheme);
+})

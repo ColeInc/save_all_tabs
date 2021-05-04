@@ -91,6 +91,8 @@ function getCurrentTabs() {
 function loadLatestTabs() {
     // loading in the previously stored tabs!
     chrome.storage.local.get("myTabs", (result) => {
+        console.log("result")
+        console.log(result)
         if (result.myTabs != undefined) {
             // console.log("Tabs found:\n" + result.myTabs);
 
@@ -116,6 +118,7 @@ function loadLatestTabs() {
 
                             // delete the annoying first empty tab that gets created in each window:
                             deleteFirstTab(windowId);
+                            return ""
                         });
                     }
                 );
@@ -205,4 +208,93 @@ function setAutoSaveMins(mins) {
             autoSaveAlarm.create(); // if an existing alarm exists, delete it and create a new one with the new frequency
         }
     });
+}
+
+// Export Tabs to Chrome Bookmarks:
+function exportTabs() {
+    chrome.storage.local.get("myTabs", (result) => {
+        if (result.myTabs != undefined) {
+
+            // Find or Create SAVE ALL TABS chrome bookmarks directory:
+            findOrCreateBookmarksDir((resp) => {
+                console.log("THIS IS THE RESP:")
+                console.log(resp)
+
+                var bookmarkDirectoryId = resp;
+                var counter = 1;
+
+                // For each different window previously saved:
+                for (const [key, value] of Object.entries(result.myTabs.windows)) {
+                    console.log("key/value: ", key, value);
+
+                    // create folder for window:
+                    var today = new Date();
+                    var dd = String(today.getDate()).padStart(2, '0');
+                    var mm = String(today.getMonth() + 1).padStart(2, '0'); // january is 0 (skidded af)
+                    var yyyy = today.getFullYear();
+                    var title = yyyy + '.' + mm + '.' + dd + ' v' + String(counter);
+
+                    chrome.bookmarks.create({
+                        parentId: bookmarkDirectoryId,
+                        title: title
+                    }, (resp) => {
+                        // now iterate all tabs in the window and create each bookmark in the bookmark directory, E.g. under 2021.05.03 v2
+                        value.tab_urls.forEach((tab) => {
+                            chrome.bookmarks.create({
+                                parentId: resp.id,
+                                title: tab,
+                                url: tab
+                            });
+                        })
+                    });
+                    counter++;
+
+                }
+            })
+        } else {
+            var errorMessage = "No previously saved chrome tabs found :(";
+            console.log(errorMessage);
+            return errorMessage;
+        }
+    });
+}
+
+// Find or Create SAVE ALL TABS chrome bookmarks directory:
+function findOrCreateBookmarksDir(callback) {
+    chrome.bookmarks.getTree((bookmarks) => {
+        bookmarks.forEach((bookmark) => {
+            // iterate highest root bookmarks
+            bookmark.children.forEach((child) => {
+                if (child.title === "Bookmarks") { // if main Bookmarks folder found. Now need to check if there's a Save all Tabs folder inside this
+                    var parentId = child.id
+                    var found = false;
+                    child.children.forEach((mainBookmarksChild) => {
+                        console.log("mainBookmarksChild: ", mainBookmarksChild)
+                        if (mainBookmarksChild.title === "SAVE ALL TABS") {
+                            console.log("existing SAVE ALL TABS file found!")
+                            found = true;
+                            callback(mainBookmarksChild.id) // create bookmarks inside the folder 
+                            return
+                        }
+                    })
+                    if (!found) {
+                        console.log("no SAVE ALL TABS file found! Creating new folder for you :)")
+                        createBookmarkFolder(parentId, callback) // create new SAVE ALL TABS folder
+                        return
+                    }
+                } else {
+                    console.log("this isn't the Bookmarks folder!")
+                }
+            });
+        });
+    });
+}
+
+function createBookmarkFolder(parent, callback) {
+    // returns the id of the SAVE ALL TABS bookmark created
+    chrome.bookmarks.create({ parentId: parent, title: "SAVE ALL TABS" }, (created) => {
+        console.log("newly created SAVE ALL TABS object:")
+        console.log(created)
+        callback(created.id)
+    })
 }
