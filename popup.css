@@ -3,25 +3,31 @@
 	--background-color: #0d0d0d;
     --main-text: #808080;
     --main-text-hover: #000000;
+    --main-text-active: #3b3b3b;
     --button-color: #1b1b1b;
     --signature-text: #414141;
     --signature-text-hover: #414141;
     --mins-text: #e1e1e1;
     --gradient-left: #ff4dff;
+    --gradient-left-hover: #ffadff;
     --gradient-right: #4dd2ff;
+    --gradient-right-hover: #9de6ff;
 }
 
 /* Light Theme */
-[data-theme="light"] {
+[userTheme="light"] {
 	--background-color: #fafafa;
 	--main-text: #737373;
     --main-text-hover: #ffffff;
+    --main-text-active: #f0f0f0;
     --button-color: #eeeeee;
     --signature-text: #D3D3D3;
     --signature-text-hover: #D3D3D3;
     --mins-text: #5F5F5F;
     --gradient-left: #ff4dff;
+    --gradient-left-hover: #ffadff;
     --gradient-right: #4dd2ff;
+    --gradient-right-hover: #9de6ff;
 }
 
 
@@ -71,16 +77,36 @@ h1 {
 	font-weight: 100;
 	font-family: Helvetica, Arial, sans-serif;
 	color: var(--main-text);
-	position: relative;
+    position: relative;
+    overflow: hidden;
 }
 
 .mainButton:hover {
 	background-color: #808080;
-	/* transition-duration: 100ms; */
 	color: var(--main-text-hover);
 	background: -webkit-linear-gradient(right, var(--gradient-left), var(--gradient-right));
-	/* -webkit-background-clip: text; */
-	/* -webkit-text-fill-color: transparent; */
+}
+
+/* OG button on click */
+/* .mainButton:active {
+    background: -webkit-linear-gradient(right, var(--gradient-left-hover), var(--gradient-right-hover));
+    color: var(--main-text-active);
+    box-shadow: 0 5px 15px rgba(145, 92, 182, .4);
+} */
+
+span.ripple {
+    position: absolute;
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 300ms linear;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
 }
 
 #exportTabs {

@@ -91,14 +91,13 @@ function getCurrentTabs() {
 function loadLatestTabs() {
     // loading in the previously stored tabs!
     chrome.storage.local.get("myTabs", (result) => {
-        console.log("result")
-        console.log(result)
+        // console.log("result")
+        // console.log(result)
         if (result.myTabs != undefined) {
             // console.log("Tabs found:\n" + result.myTabs);
 
             // For each different window previously saved:
             for (const [key, value] of Object.entries(result.myTabs.windows)) {
-                console.log(key, value);
 
                 var incognito = value.incognito ? true : false;
 
@@ -144,29 +143,25 @@ function genericChromeStorageSaver(key, value) {
     // console.log("keyPairValue: ", keyValuePair);
 
     chrome.storage.local.set(keyValuePair, (result) => {
-        console.log("genericChromeStorageSaver stored the following:\n");
-        console.log(keyValuePair);
+        // console.log("genericChromeStorageSaver stored the following:\n");
+        // console.log(keyValuePair);
     });
 }
 
 function autoOpenChecked() {
-    // console.log("autoOpenChecked!");
     genericChromeStorageSaver("autoOpenCheckbox", true); // updates the chrome.storage.local value for this checkbox
 }
 
 function autoOpenUnchecked() {
-    // console.log("autoOpenUnchecked!");
     genericChromeStorageSaver("autoOpenCheckbox", false);
 }
 
 function autoSaveChecked() {
-    // console.log("autoSaveChecked!");
     genericChromeStorageSaver("autoSaveCheckbox", true);
     autoSaveAlarm.create();
 }
 
 function autoSaveUnchecked() {
-    // console.log("autoSaveUnchecked!");
     genericChromeStorageSaver("autoSaveCheckbox", false);
     autoSaveAlarm.clear();
 }
@@ -212,20 +207,21 @@ function setAutoSaveMins(mins) {
 
 // Export Tabs to Chrome Bookmarks:
 function exportTabs() {
+
+    // get most up to date version of user's tabs first:
+    getCurrentTabs()
+
     chrome.storage.local.get("myTabs", (result) => {
         if (result.myTabs != undefined) {
 
             // Find or Create SAVE ALL TABS chrome bookmarks directory:
             findOrCreateBookmarksDir((resp) => {
-                console.log("THIS IS THE RESP:")
-                console.log(resp)
 
                 var bookmarkDirectoryId = resp;
                 var counter = 1;
 
                 // For each different window previously saved:
                 for (const [key, value] of Object.entries(result.myTabs.windows)) {
-                    console.log("key/value: ", key, value);
 
                     // create folder for window:
                     var today = new Date();
@@ -265,25 +261,25 @@ function findOrCreateBookmarksDir(callback) {
         bookmarks.forEach((bookmark) => {
             // iterate highest root bookmarks
             bookmark.children.forEach((child) => {
-                if (child.title === "Bookmarks") { // if main Bookmarks folder found. Now need to check if there's a Save all Tabs folder inside this
+                if (child.title === "Bookmarks bar") { // if main Bookmarks folder found. Now need to check if there's a Save all Tabs folder inside this
+                    // if (child.title === "Bookmarks") { // works in Brave
                     var parentId = child.id
                     var found = false;
                     child.children.forEach((mainBookmarksChild) => {
-                        console.log("mainBookmarksChild: ", mainBookmarksChild)
                         if (mainBookmarksChild.title === "SAVE ALL TABS") {
-                            console.log("existing SAVE ALL TABS file found!")
+                            // console.log("existing SAVE ALL TABS file found!")
                             found = true;
                             callback(mainBookmarksChild.id) // create bookmarks inside the folder 
                             return
                         }
                     })
                     if (!found) {
-                        console.log("no SAVE ALL TABS file found! Creating new folder for you :)")
+                        // console.log("no SAVE ALL TABS file found! Creating new folder for you :)")
                         createBookmarkFolder(parentId, callback) // create new SAVE ALL TABS folder
                         return
                     }
                 } else {
-                    console.log("this isn't the Bookmarks folder!")
+                    // console.log("this isn't the Bookmarks folder!")
                 }
             });
         });
@@ -293,8 +289,8 @@ function findOrCreateBookmarksDir(callback) {
 function createBookmarkFolder(parent, callback) {
     // returns the id of the SAVE ALL TABS bookmark created
     chrome.bookmarks.create({ parentId: parent, title: "SAVE ALL TABS" }, (created) => {
-        console.log("newly created SAVE ALL TABS object:")
-        console.log(created)
+        // console.log("newly created SAVE ALL TABS object:")
+        // console.log(created)
         callback(created.id)
     })
 }

@@ -28,8 +28,15 @@ function popupStartup() {
         }
     });
 
-    // Set default theme to dark!
-    // document.documentElement.setAttribute("data-theme", "dark");
+    // Get last saved theme from local storage:
+    chrome.storage.local.get("theme", (result) => {
+        if (result.theme != undefined) {
+            var switchToTheme = result.theme === "light" ? "light" : "dark" // if explicitly saved to light, set theme to light, otherwise anything else set dark
+        } else {
+            var switchToTheme = "dark" // if no theme saved, go dark
+        }
+        document.documentElement.setAttribute("userTheme", switchToTheme);
+    });
 }
 
 // ------------------------------------------------
@@ -160,6 +167,33 @@ document.getElementById("autoSaveSwitchCaption").addEventListener("mouseleave", 
     hiddenElement.style.display = "none";
 });
 
+// ripple button click animation. skidded af from - https://css-tricks.com/how-to-recreate-the-ripple-effect-of-material-design-buttons/
+function createRipple(event) {
+    const button = event.currentTarget;
+
+    const circle = document.createElement("span");
+    const diameter = Math.max(button.clientWidth, button.clientHeight);
+    const radius = diameter / 2;
+
+    circle.style.width = circle.style.height = `${diameter}px`;
+    circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
+    circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
+    circle.classList.add("ripple");
+
+    const ripple = button.getElementsByClassName("ripple")[0];
+
+    if (ripple) {
+        ripple.remove();
+    }
+
+    button.appendChild(circle);
+}
+
+const buttons = document.getElementsByClassName("mainButton");
+for (const button of buttons) {
+    button.addEventListener("click", createRipple);
+}
+
 // Export Tabs to Chrome Bookmarks Button Listener:
 document.getElementById("exportTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
@@ -173,7 +207,18 @@ document.getElementById("exportTabs").addEventListener("click", () => {
 
 // dark / light mode easter egg listener ;)
 document.getElementById("daynnite").addEventListener("click", () => {
-    var currentTheme = document.documentElement.getAttribute("data-theme"); // get current theme
-    var switchToTheme = currentTheme === "dark" ? "light" : "dark"
-    document.documentElement.setAttribute("data-theme", switchToTheme);
+
+    chrome.storage.local.get("theme", (result) => {
+        if (result.theme != undefined) {
+            var switchToTheme = result.theme === "dark" ? "light" : "dark" // toggle theme
+        } else {
+            var switchToTheme = "dark" // if no theme saved, go dark
+        }
+        document.documentElement.setAttribute("userTheme", switchToTheme);
+
+        // save their latest choice back to local storage
+        chrome.runtime.getBackgroundPage((backgroundPage) => {
+            backgroundPage.genericChromeStorageSaver("theme", switchToTheme);
+        });
+    });
 })
