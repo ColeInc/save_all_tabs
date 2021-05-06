@@ -212,7 +212,7 @@ document.getElementById("daynnite").addEventListener("click", () => {
         if (result.theme != undefined) {
             var switchToTheme = result.theme === "dark" ? "light" : "dark" // toggle theme
         } else {
-            var switchToTheme = "dark" // if no theme saved, go dark
+            var switchToTheme = "light" // if no theme saved, default is dark, so toggle to light
         }
         document.documentElement.setAttribute("userTheme", switchToTheme);
 
