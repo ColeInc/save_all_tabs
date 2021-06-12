@@ -31,9 +31,9 @@ function popupStartup() {
     // Get last saved theme from local storage:
     chrome.storage.local.get("theme", (result) => {
         if (result.theme != undefined) {
-            var switchToTheme = result.theme === "light" ? "light" : "dark" // if explicitly saved to light, set theme to light, otherwise anything else set dark
+            var switchToTheme = result.theme === "light" ? "light" : "dark"; // if explicitly saved to light, set theme to light, otherwise anything else set dark
         } else {
-            var switchToTheme = "dark" // if no theme saved, go dark
+            var switchToTheme = "dark"; // if no theme saved, go dark
         }
         document.documentElement.setAttribute("userTheme", switchToTheme);
     });
@@ -48,7 +48,8 @@ document.getElementById("saveTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
         var resp = backgroundPage.getCurrentTabs();
         if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.display =
+                "block";
             document.getElementById("errorNotification").innerHTML = resp;
         }
     });
@@ -59,7 +60,8 @@ document.getElementById("loadTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
         var resp = backgroundPage.loadLatestTabs();
         if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.display =
+                "block";
             document.getElementById("errorNotification").innerHTML = resp;
         }
     });
@@ -106,7 +108,7 @@ function isNumeric(str) {
 // Auto Save MINUTES Input Box
 document.getElementById("autoSaveMinsInput").addEventListener("input", (e) => {
     var mins = e.target.value;
-    if (isNumeric(mins) && mins > 1) {
+    if (isNumeric(mins) && mins >= 1) {
         document.getElementById("inputNotification").innerHTML = "";
         document.getElementById("inputNotification").style.display = "none";
         chrome.runtime.getBackgroundPage((backgroundPage) => {
@@ -144,28 +146,36 @@ document.getElementById("autoSaveMinsInput").addEventListener("blur", (e) => {
 // });
 
 // Hover ON AutoOpen Description Event Listener:
-document.getElementById("autoOpenSwitchCaption").addEventListener("mouseenter", function (event) {
-    var hiddenElement = document.getElementById("autoOpenDesc")
-    hiddenElement.style.display = "block";
-});
+document
+    .getElementById("autoOpenSwitchCaption")
+    .addEventListener("mouseenter", function (event) {
+        var hiddenElement = document.getElementById("autoOpenDesc");
+        hiddenElement.style.display = "block";
+    });
 
 // Hover OFF AutoOpen Description Event Listener:
-document.getElementById("autoOpenSwitchCaption").addEventListener("mouseleave", function (event) {
-    var hiddenElement = document.getElementById("autoOpenDesc")
-    hiddenElement.style.display = "none";
-});
+document
+    .getElementById("autoOpenSwitchCaption")
+    .addEventListener("mouseleave", function (event) {
+        var hiddenElement = document.getElementById("autoOpenDesc");
+        hiddenElement.style.display = "none";
+    });
 
 // Hover ON AutoSave Description Event Listener:
-document.getElementById("autoSaveSwitchCaption").addEventListener("mouseenter", function (event) {
-    var hiddenElement = document.getElementById("autoSaveDesc")
-    hiddenElement.style.display = "block";
-});
+document
+    .getElementById("autoSaveSwitchCaption")
+    .addEventListener("mouseenter", function (event) {
+        var hiddenElement = document.getElementById("autoSaveDesc");
+        hiddenElement.style.display = "block";
+    });
 
 // Hover OFF AutoSave Description Event Listener:
-document.getElementById("autoSaveSwitchCaption").addEventListener("mouseleave", function (event) {
-    var hiddenElement = document.getElementById("autoSaveDesc")
-    hiddenElement.style.display = "none";
-});
+document
+    .getElementById("autoSaveSwitchCaption")
+    .addEventListener("mouseleave", function (event) {
+        var hiddenElement = document.getElementById("autoSaveDesc");
+        hiddenElement.style.display = "none";
+    });
 
 // ripple button click animation. skidded af from - https://css-tricks.com/how-to-recreate-the-ripple-effect-of-material-design-buttons/
 function createRipple(event) {
@@ -199,7 +209,8 @@ document.getElementById("exportTabs").addEventListener("click", () => {
     chrome.runtime.getBackgroundPage((backgroundPage) => {
         var resp = backgroundPage.exportTabs();
         if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.display =
+                "block";
             document.getElementById("errorNotification").innerHTML = resp;
         }
     });
@@ -207,12 +218,11 @@ document.getElementById("exportTabs").addEventListener("click", () => {
 
 // dark / light mode easter egg listener ;)
 document.getElementById("daynnite").addEventListener("click", () => {
-
     chrome.storage.local.get("theme", (result) => {
         if (result.theme != undefined) {
-            var switchToTheme = result.theme === "dark" ? "light" : "dark" // toggle theme
+            var switchToTheme = result.theme === "dark" ? "light" : "dark"; // toggle theme
         } else {
-            var switchToTheme = "light" // if no theme saved, default is dark, so toggle to light
+            var switchToTheme = "light"; // if no theme saved, default is dark, so toggle to light
         }
         document.documentElement.setAttribute("userTheme", switchToTheme);
 
@@ -221,4 +231,4 @@ document.getElementById("daynnite").addEventListener("click", () => {
             backgroundPage.genericChromeStorageSaver("theme", switchToTheme);
         });
     });
-})
+});
