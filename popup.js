@@ -45,24 +45,48 @@ function popupStartup() {
 
 // SAVETABS BUTTON LISTENER
 document.getElementById("saveTabs").addEventListener("click", () => {
-    chrome.runtime.getBackgroundPage((backgroundPage) => {
-        var resp = backgroundPage.getCurrentTabs();
-        if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display =
-                "block";
-            document.getElementById("errorNotification").innerHTML = resp;
+    console.log("🔘 POPUP: Save Tabs button clicked - sending message to background script");
+    chrome.runtime.sendMessage({ action: "getCurrentTabs" }, (response) => {
+        if (response && response.success) {
+            // Show success feedback
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#4CAF50";
+            // document.getElementById("errorNotification").innerHTML = "Tabs saved successfully!";
+            
+            // Hide the notification after 2 seconds
+            setTimeout(() => {
+                document.getElementById("errorNotification").style.display = "none";
+                document.getElementById("errorNotification").style.color = "#ff5555";
+                document.getElementById("errorNotification").innerHTML = "";
+            }, 2000);
+        } else {
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#ff5555";
+            document.getElementById("errorNotification").innerHTML = "Failed to save tabs";
         }
     });
 });
 
 // LOADTABS BUTTON LISTENER
 document.getElementById("loadTabs").addEventListener("click", () => {
-    chrome.runtime.getBackgroundPage((backgroundPage) => {
-        var resp = backgroundPage.loadLatestTabs();
-        if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display =
-                "block";
-            document.getElementById("errorNotification").innerHTML = resp;
+    console.log("🔘 POPUP: Load Tabs button clicked - sending message to background script");
+    chrome.runtime.sendMessage({ action: "loadLatestTabs" }, (response) => {
+        if (response && response.success) {
+            // Show success feedback
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#4CAF50";
+            // document.getElementById("errorNotification").innerHTML = "Tabs loaded successfully!";
+            
+            // Hide the notification after 2 seconds
+            setTimeout(() => {
+                document.getElementById("errorNotification").style.display = "none";
+                document.getElementById("errorNotification").style.color = "#ff5555";
+                document.getElementById("errorNotification").innerHTML = "";
+            }, 2000);
+        } else {
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#ff5555";
+            document.getElementById("errorNotification").innerHTML = response.error || "No previously saved tabs found";
         }
     });
 });
@@ -74,26 +98,18 @@ document.getElementById("loadTabs").addEventListener("click", () => {
 // AUTO OPEN Checkbox
 document.getElementById("autoOpenCheckbox").addEventListener("change", (e) => {
     if (e.target.checked) {
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.autoOpenChecked();
-        });
+        chrome.runtime.sendMessage({ action: "autoOpenChecked" });
     } else {
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.autoOpenUnchecked();
-        });
+        chrome.runtime.sendMessage({ action: "autoOpenUnchecked" });
     }
 });
 
 // AUTO SAVE Checkbox
 document.getElementById("autoSaveCheckbox").addEventListener("change", (e) => {
     if (e.target.checked) {
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.autoSaveChecked();
-        });
+        chrome.runtime.sendMessage({ action: "autoSaveChecked" });
     } else {
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.autoSaveUnchecked();
-        });
+        chrome.runtime.sendMessage({ action: "autoSaveUnchecked" });
     }
 });
 
@@ -111,8 +127,9 @@ document.getElementById("autoSaveMinsInput").addEventListener("input", (e) => {
     if (isNumeric(mins) && mins >= 1) {
         document.getElementById("inputNotification").innerHTML = "";
         document.getElementById("inputNotification").style.display = "none";
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.setAutoSaveMins(e.target.value);
+        chrome.runtime.sendMessage({ 
+            action: "setAutoSaveMins", 
+            minutes: e.target.value 
         });
     } else if (mins.length > 0) {
         document.getElementById("inputNotification").style.display = "block";
@@ -206,12 +223,24 @@ for (const button of buttons) {
 
 // Export Tabs to Chrome Bookmarks Button Listener:
 document.getElementById("exportTabs").addEventListener("click", () => {
-    chrome.runtime.getBackgroundPage((backgroundPage) => {
-        var resp = backgroundPage.exportTabs();
-        if (resp.length > 0) {
-            document.getElementById("errorNotification").style.display =
-                "block";
-            document.getElementById("errorNotification").innerHTML = resp;
+    console.log("🔘 POPUP: Export Tabs button clicked - sending message to background script");
+    chrome.runtime.sendMessage({ action: "exportTabs" }, (response) => {
+        if (response && response.success) {
+            // Show success feedback
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#4CAF50";
+            document.getElementById("errorNotification").innerHTML = "Tabs exported to bookmarks successfully!";
+            
+            // Hide the notification after 3 seconds
+            setTimeout(() => {
+                document.getElementById("errorNotification").style.display = "none";
+                document.getElementById("errorNotification").style.color = "#ff5555";
+                document.getElementById("errorNotification").innerHTML = "";
+            }, 3000);
+        } else {
+            document.getElementById("errorNotification").style.display = "block";
+            document.getElementById("errorNotification").style.color = "#ff5555";
+            document.getElementById("errorNotification").innerHTML = "Failed to export tabs to bookmarks";
         }
     });
 });
@@ -227,8 +256,10 @@ document.getElementById("daynnite").addEventListener("click", () => {
         document.documentElement.setAttribute("userTheme", switchToTheme);
 
         // save their latest choice back to local storage
-        chrome.runtime.getBackgroundPage((backgroundPage) => {
-            backgroundPage.genericChromeStorageSaver("theme", switchToTheme);
+        chrome.runtime.sendMessage({
+            action: "genericChromeStorageSaver",
+            key: "theme",
+            value: switchToTheme
         });
     });
 });
