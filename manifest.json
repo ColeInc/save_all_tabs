@@ -1,8 +1,8 @@
 {
     "manifest_version": 3,
-    "name": "Save All Tabs",
-    "version": "1.0",
-    "description": "save all currently open tabs, and reopen them on restart!",
+    "name": "Beludia - Save All Open Tabs",
+    "version": "1.0.0",
+    "description": "Save all currently open tabs, and reopen them on restart!",
     "background": {
         "service_worker": "background.js"
     },
