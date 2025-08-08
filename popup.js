@@ -49,8 +49,8 @@ document.getElementById("saveTabs").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: "getCurrentTabs" }, (response) => {
         if (response && response.success) {
             // Show success feedback
-            document.getElementById("errorNotification").style.display = "block";
-            document.getElementById("errorNotification").style.color = "#4CAF50";
+            // document.getElementById("errorNotification").style.display = "block";
+            // document.getElementById("errorNotification").style.color = "#4CAF50";
             // document.getElementById("errorNotification").innerHTML = "Tabs saved successfully!";
             
             // Hide the notification after 2 seconds
@@ -73,8 +73,8 @@ document.getElementById("loadTabs").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: "loadLatestTabs" }, (response) => {
         if (response && response.success) {
             // Show success feedback
-            document.getElementById("errorNotification").style.display = "block";
-            document.getElementById("errorNotification").style.color = "#4CAF50";
+            // document.getElementById("errorNotification").style.display = "block";
+            // document.getElementById("errorNotification").style.color = "#4CAF50";
             // document.getElementById("errorNotification").innerHTML = "Tabs loaded successfully!";
             
             // Hide the notification after 2 seconds
@@ -227,9 +227,9 @@ document.getElementById("exportTabs").addEventListener("click", () => {
     chrome.runtime.sendMessage({ action: "exportTabs" }, (response) => {
         if (response && response.success) {
             // Show success feedback
-            document.getElementById("errorNotification").style.display = "block";
-            document.getElementById("errorNotification").style.color = "#4CAF50";
-            document.getElementById("errorNotification").innerHTML = "Tabs exported to bookmarks successfully!";
+            // document.getElementById("errorNotification").style.display = "block";
+            // document.getElementById("errorNotification").style.color = "#4CAF50";
+            // document.getElementById("errorNotification").innerHTML = "Tabs exported to bookmarks successfully!";
             
             // Hide the notification after 3 seconds
             setTimeout(() => {
